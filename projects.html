@@ -64,28 +64,46 @@
   <div class="projects" id="projects"></div>
 
   <script>
-    fetch("https://api.github.com/users/sirsevrusio/repos")
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById("projects");
-        data.forEach(repo => {
+    const container = document.getElementById("projects");
+    container.innerHTML = "<p>Loading projects...</p>";
+  
+    Promise.all([
+      fetch("config.json").then(res => res.json()), // Load excluded repo config
+      fetch("https://api.github.com/users/sirsevrusio/repos").then(res => res.json())
+    ])
+      .then(([config, repos]) => {
+        const excludedRepos = config.excludedRepos || [];
+  
+        const visibleRepos = repos
+          .filter(repo => !excludedRepos.includes(repo.name))
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  
+        container.innerHTML = ""; // Clear loading message
+  
+        visibleRepos.forEach(repo => {
           const card = document.createElement("div");
           card.className = "project-card";
-
+  
           card.innerHTML = `
             <h3>${repo.name}</h3>
             <p>${repo.description || "No description provided."}</p>
+            <p><strong>Language:</strong> ${repo.language || "N/A"}</p>
+            <p><strong>⭐ Stars:</strong> ${repo.stargazers_count}</p>
             <a href="${repo.html_url}" target="_blank">🔗 View on GitHub</a>
           `;
-
+  
           container.appendChild(card);
         });
+  
+        if (visibleRepos.length === 0) {
+          container.innerHTML = "<p>No visible projects to show.</p>";
+        }
       })
       .catch(error => {
-        document.getElementById("projects").innerHTML =
-          "<p>Failed to load projects. Please try again later.</p>";
+        container.innerHTML = "<p>Failed to load projects. Please try again later.</p>";
         console.error(error);
       });
-  </script>
+  </script>  
+  
 </body>
 </html>
