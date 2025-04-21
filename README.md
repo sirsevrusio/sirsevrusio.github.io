@@ -1,6 +1,6 @@
 # 🌐 Sirsevrus Portfolio
 
-Welcome to my personal developer portfolio — [sirsevrus.github.io](https://sirsevrusio.github.io/sirsevrus.github.io/) — built and maintained by me, **SirSevrus**.
+Welcome to my personal developer portfolio — [sirsevrus.github.io](https://sirsevrusio.github.io/) — built and maintained by me, **SirSevrus**.
 
 This portfolio showcases my work as a **solo DevOps engineer**, **Python Flask developer**, and security-aware web craftsman. Built from scratch using clean HTML, CSS, and some JavaScript, it reflects my design principles: **clarity, simplicity, security, and storytelling**.
 
