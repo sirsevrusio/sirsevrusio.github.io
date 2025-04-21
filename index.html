@@ -1,60 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sirsevrus | DevOps & Python Developer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --bg: #f7f9fc;
+      --card-bg: #ffffff;
+      --text: #2d2d2d;
+      --accent: #007acc;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
     body {
       margin: 0;
-      font-family: 'Fira Code', monospace;
-      background-color: #0d1117;
-      color: #c9d1d9;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 2rem;
     }
-    img {
-      width: 180px;
-      border-radius: 16px;
+    .card {
+      background: var(--card-bg);
+      box-shadow: 0 8px 24px var(--shadow);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      max-width: 900px;
+      padding: 2rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .content {
+      flex: 1 1 400px;
+    }
+    .content h1 {
+      font-size: 2.2rem;
+      color: var(--accent);
       margin-bottom: 1rem;
     }
-    h1 {
-      font-size: 2rem;
-      color: #58a6ff;
-    }
-    p {
-      max-width: 600px;
-      text-align: center;
+    .content p {
+      font-size: 1rem;
       line-height: 1.6;
+      margin-bottom: 1rem;
     }
-    .links {
-      margin-top: 2rem;
-    }
-    .links a {
-      color: #58a6ff;
+    .email-button {
+      display: inline-block;
+      background-color: var(--accent);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
       text-decoration: none;
-      margin: 0 1rem;
-      transition: color 0.3s ease;
+      font-weight: 600;
+      transition: background 0.3s ease;
     }
-    .links a:hover {
-      color: #8ae2ff;
+    .email-button:hover {
+      background-color: #005f99;
+    }
+    .profile-pic {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--accent);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    @media (max-width: 768px) {
+      .card {
+        flex-direction: column-reverse;
+        align-items: center;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
-  <img src="assets/profile-pixel.jpg" alt="Sirsevrus Profile">
-  <h1>Hi, I'm Sirsevrus 👋</h1>
-  <p>
-    I'm Sahil — a solo DevOps engineer and full-stack programmer who crafts web servers from the ground up using <strong>Python Flask</strong>, sprinkles in JavaScript and CSS for polish, and deploys everything from my laptop. I care deeply about <strong>security</strong>, design, and the story my code tells. Currently building a secure, clean personal portfolio to share my journey.
-  </p>
-  <div class="links">
-    <a href="https://github.com/sirsevrusio">GitHub</a>
-    <a href="#contact">Contact</a>
+  <div class="card">
+    <div class="content">
+      <h1>Hi, I'm Sirsevrus 👋</h1>
+      <p>
+        I'm a solo DevOps engineer and full-stack programmer who crafts web servers from the ground up using <strong>Python Flask</strong>, sprinkles in JavaScript and CSS for polish, and deploys everything from my laptop. I care deeply about <strong>security</strong>, design, and the story my code tells.
+      </p>
+      <p>
+        Always exploring new ways to deliver content on the web — beautifully and securely. Have an idea or suggestion? Feel free to drop me a message!
+      </p>
+      <a href="mailto:sirsevrusio@gmail.com" class="email-button">📧 Email Me</a>
+    </div>
+    <img src="assets/profile-pixel.jpg" alt="Sirsevrus Profile" class="profile-pic" />
   </div>
 </body>
 </html>
