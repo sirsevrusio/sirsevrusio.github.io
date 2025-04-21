@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sirsevrus | Projects</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/nav.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f7f9fc;
+      color: #2d2d2d;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #007acc;
+      margin: 3rem 0 2rem;
+    }
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s;
+    }
+    .project-card:hover {
+      transform: translateY(-5px);
+    }
+    .project-card h3 {
+      margin-top: 0;
+      color: #007acc;
+    }
+    .project-card p {
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+    .project-card a {
+      display: inline-block;
+      margin-top: 1rem;
+      color: #007acc;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <ul>
+      <li><a href="index.html">About Me</a></li>
+      <li><a href="projects.html" class="active">Projects</a></li>
+    </ul>
+  </nav>
+
+  <h1>📦 My GitHub Projects</h1>
+  <div class="projects" id="projects"></div>
+
+  <script>
+    fetch("https://api.github.com/users/sirsevrusio/repos")
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("projects");
+        data.forEach(repo => {
+          const card = document.createElement("div");
+          card.className = "project-card";
+
+          card.innerHTML = `
+            <h3>${repo.name}</h3>
+            <p>${repo.description || "No description provided."}</p>
+            <a href="${repo.html_url}" target="_blank">🔗 View on GitHub</a>
+          `;
+
+          container.appendChild(card);
+        });
+      })
+      .catch(error => {
+        document.getElementById("projects").innerHTML =
+          "<p>Failed to load projects. Please try again later.</p>";
+        console.error(error);
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+/* assets/nav.css */
+.nav {
+    background-color: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nav li {
+    margin: 0;
+  }
+  
+  .nav a {
+    text-decoration: none;
+    color: #007acc;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .nav a:hover {
+    border-color: #007acc;
+    color: #005f99;
+  }
+  
+  .nav a.active {
+    border-color: #007acc;
+  }
+  
