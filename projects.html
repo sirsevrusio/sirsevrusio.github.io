@@ -7,48 +7,123 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/nav.css" />
   <style>
+    :root {
+      --bg-color: #f7f9fc;
+      --text-color: #2d2d2d;
+      --card-bg: #ffffff;
+      --card-shadow: rgba(0, 0, 0, 0.06);
+      --primary-color: #007acc;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1e1e1e;
+        --text-color: #e4e4e4;
+        --card-bg: #2a2a2a;
+        --card-shadow: rgba(0, 0, 0, 0.3);
+        --primary-color: #66d9ef;
+      }
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #f7f9fc;
-      color: #2d2d2d;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       padding: 2rem;
     }
+
     h1 {
       text-align: center;
-      color: #007acc;
+      color: var(--primary-color);
       margin: 3rem 0 2rem;
     }
+
     .projects {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
     }
+
+    .projects.loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+
+    .spinner {
+      display: flex;
+      gap: 8px;
+    }
+
+    .spinner div {
+      width: 12px;
+      height: 12px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      animation: bounce 0.6s infinite ease-in-out alternate;
+    }
+
+    .spinner div:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .spinner div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-12px);
+      }
+    }
+
     .project-card {
-      background: #ffffff;
+      background: var(--card-bg);
       border-radius: 16px;
       padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-      transition: transform 0.2s;
+      box-shadow: 0 4px 12px var(--card-shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
     }
+
     .project-card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 6px 16px var(--card-shadow);
     }
+
     .project-card h3 {
       margin-top: 0;
-      color: #007acc;
+      color: var(--primary-color);
+      text-transform: capitalize;
     }
+
     .project-card p {
       margin: 0.5rem 0;
       font-size: 0.95rem;
-      color: #444;
     }
+
     .project-card a {
       display: inline-block;
       margin-top: 1rem;
-      color: #007acc;
+      color: var(--primary-color);
       text-decoration: none;
       font-weight: 600;
+    }
+
+    .project-card a:hover {
+      text-decoration: underline;
+    }
+
+    .commit-link {
+      font-size: 0.85rem;
+      color: var(--primary-color);
     }
   </style>
 </head>
@@ -60,50 +135,102 @@
     </ul>
   </nav>
 
-  <h1>📦 My GitHub Projects</h1>
-  <div class="projects" id="projects"></div>
+  <h1>🔗 Project Gallery</h1>
+  <div class="projects loading" id="projects">
+    <div class="spinner">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
 
   <script>
     const container = document.getElementById("projects");
-    container.innerHTML = "<p>Loading projects...</p>";
-  
-    Promise.all([
-      fetch("config.json").then(res => res.json()), // Load excluded repo config
-      fetch("https://api.github.com/users/sirsevrusio/repos").then(res => res.json())
-    ])
-      .then(([config, repos]) => {
+
+    function formatRepoName(name) {
+      return name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    function formatTimeAgo(dateString) {
+      const now = new Date();
+      const then = new Date(dateString);
+      const diffMs = now - then;
+      const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffDays >= 30) {
+        return then.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      } else if (diffDays >= 1) {
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+      } else {
+        return `${diffHrs} hour${diffHrs !== 1 ? 's' : ''} ago`;
+      }
+    }
+
+    async function loadProjects() {
+      try {
+        const cached = localStorage.getItem("sirsevrusio_repos");
+        const cachedTime = localStorage.getItem("sirsevrusio_repos_time");
+
+        let repos;
+
+        if (cached && cachedTime && Date.now() - cachedTime < 10 * 60 * 1000) {
+          repos = JSON.parse(cached);
+        } else {
+          const res = await fetch("https://api.github.com/users/sirsevrusio/repos");
+          if (!res.ok) throw new Error("GitHub API error");
+          repos = await res.json();
+          localStorage.setItem("sirsevrusio_repos", JSON.stringify(repos));
+          localStorage.setItem("sirsevrusio_repos_time", Date.now());
+        }
+
+        const configRes = await fetch("config.json");
+        const config = configRes.ok ? await configRes.json() : { excludedRepos: [] };
         const excludedRepos = config.excludedRepos || [];
-  
+
         const visibleRepos = repos
           .filter(repo => !excludedRepos.includes(repo.name))
           .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  
-        container.innerHTML = ""; // Clear loading message
-  
-        visibleRepos.forEach(repo => {
+
+        container.classList.remove("loading");
+        container.innerHTML = "";
+
+        if (visibleRepos.length === 0) {
+          container.innerHTML = "<p>No visible projects to show.</p>";
+          return;
+        }
+
+        // Fetch latest commit for each repo
+        for (const repo of visibleRepos) {
+          const commitRes = await fetch(`https://api.github.com/repos/sirsevrusio/${repo.name}/commits?per_page=1`);
+          const commitData = await commitRes.json();
+          const latestCommit = commitData[0];
+
           const card = document.createElement("div");
           card.className = "project-card";
-  
+
           card.innerHTML = `
-            <h3>${repo.name}</h3>
+            <h3>${formatRepoName(repo.name)}</h3>
             <p>${repo.description || "No description provided."}</p>
             <p><strong>Language:</strong> ${repo.language || "N/A"}</p>
             <p><strong>⭐ Stars:</strong> ${repo.stargazers_count}</p>
+            <p><strong>🕒 Last Updated:</strong> ${formatTimeAgo(repo.updated_at)}</p>
             <a href="${repo.html_url}" target="_blank">🔗 View on GitHub</a>
+            <p class="commit-link">Latest commit: <a href="${latestCommit.html_url}" target="_blank">${latestCommit.commit.message}</a></p>
           `;
-  
+
+          card.addEventListener("click", () => {
+            window.open(repo.html_url, "_blank");
+          });
+
           container.appendChild(card);
-        });
-  
-        if (visibleRepos.length === 0) {
-          container.innerHTML = "<p>No visible projects to show.</p>";
         }
-      })
-      .catch(error => {
-        container.innerHTML = "<p>Failed to load projects. Please try again later.</p>";
+      } catch (error) {
+        container.classList.remove("loading");
+        container.innerHTML = "<p>⚠️ Failed to load projects. Please try again later.</p>";
         console.error(error);
-      });
-  </script>  
-  
+      }
+    }
+
+    loadProjects();
+  </script>
 </body>
 </html>

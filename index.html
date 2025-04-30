@@ -14,6 +14,7 @@
       --accent: #007acc;
       --shadow: rgba(0, 0, 0, 0.1);
     }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
@@ -25,7 +26,16 @@
       justify-content: center;
       min-height: 100vh;
       padding: 2rem;
+      opacity: 0; /* Initially invisible */
+      animation: fadeIn 1s forwards; /* Fade-in animation */
     }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
     .card {
       background: var(--card-bg);
       box-shadow: 0 8px 24px var(--shadow);
@@ -36,21 +46,33 @@
       padding: 2rem;
       gap: 2rem;
       flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeInCard 1s 1s forwards; /* Delayed fade-in for the card */
     }
+
+    @keyframes fadeInCard {
+      to {
+        opacity: 1;
+      }
+    }
+
     .content {
       flex: 1 1 400px;
     }
+
     .content h1 {
       font-size: 2.2rem;
       color: var(--accent);
       margin-bottom: 1rem;
     }
+
     .content p {
       font-size: 1rem;
       line-height: 1.6;
       margin-bottom: 1rem;
     }
-    .email-button {
+
+    .email-button, .discord-button {
       display: inline-block;
       background-color: var(--accent);
       color: white;
@@ -58,11 +80,15 @@
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
+      margin-right: 0.8rem;
     }
-    .email-button:hover {
+
+    .email-button:hover, .discord-button:hover {
       background-color: #005f99;
+      transform: scale(1.05); /* Button scale effect on hover */
     }
+
     .profile-pic {
       width: 200px;
       height: 200px;
@@ -71,11 +97,55 @@
       border: 4px solid var(--accent);
       box-shadow: 0 4px 12px var(--shadow);
     }
+
+    .discord-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background-color: #7289da; /* Discord blue */
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+
     @media (max-width: 768px) {
       .card {
         flex-direction: column-reverse;
         align-items: center;
         text-align: center;
+      }
+    }
+
+    /* 🌙 Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --card-bg: #2d2d2d;
+        --text: #eaeaea;
+        --accent: #66d9ef;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+
+      .card {
+        box-shadow: 0 8px 24px var(--shadow);
+      }
+
+      .content h1 {
+        color: var(--accent);
+      }
+
+      .email-button, .discord-button {
+        background-color: var(--accent);
+        color: #1e1e1e;
+      }
+
+      .email-button:hover, .discord-button:hover {
+        background-color: #80dfff;
+      }
+
+      .profile-pic {
+        border-color: var(--accent);
+        box-shadow: 0 4px 12px var(--shadow);
       }
     }
   </style>
@@ -87,6 +157,7 @@
       <li><a href="projects.html" class="active">Projects</a></li>
     </ul>
   </nav>
+
   <div class="card">
     <div class="content">
       <h1>Hi, I'm Sirsevrus 👋</h1>
@@ -97,6 +168,9 @@
         Always exploring new ways to deliver content on the web — beautifully and securely. Have an idea or suggestion? Feel free to drop me a message!
       </p>
       <a href="mailto:github.sirsevrus@gmail.com" class="email-button">📧 Email Me</a>
+      <a href="https://discord.gg/93vhhZDFSu" class="discord-button" target="_blank">
+        ⚡ Join me on Discord
+      </a>
     </div>
     <img src="assets/profile-pixel.jpg" alt="Sirsevrus Profile" class="profile-pic" />
   </div>
