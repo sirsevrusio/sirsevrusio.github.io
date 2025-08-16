@@ -11,13 +11,10 @@
       font-family: 'Inter', sans-serif;
       background-color: #fafafa;
       color: #333;
-      margin: 20px;
+      margin: 20px auto;
       padding: 20px;
       max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
     }
-
     h2 {
       font-weight: 700;
       color: #222;
@@ -27,19 +24,14 @@
       font-family: 'Fira Code', monospace;
       letter-spacing: 1.2px;
     }
-
     form {
       background: #fff;
       padding: 35px 40px;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-      box-sizing: border-box;
       transition: box-shadow 0.3s ease;
     }
-    form:hover {
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-    }
-
+    form:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
     label {
       font-weight: 600;
       display: block;
@@ -48,12 +40,8 @@
       font-size: 1.1rem;
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      transition: color 0.3s ease;
     }
-
-    input[type="text"],
-    input[type="email"],
-    textarea {
+    input[type="text"], input[type="email"], textarea {
       width: 100%;
       padding: 14px 18px;
       margin-bottom: 28px;
@@ -61,21 +49,16 @@
       border: 1.8px solid #ccc;
       font-size: 1.1rem;
       font-family: 'Inter', sans-serif;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
       box-sizing: border-box;
       box-shadow: inset 0 3px 6px rgba(0,0,0,0.05);
-      resize: none; /* disable manual resizing */
+      resize: none;
     }
-
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    textarea:focus {
+    input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
       outline: none;
       border-color: #5b9bd5;
       box-shadow: 0 0 8px rgba(91,155,213,0.6);
       background-color: #f2f8ff;
     }
-
     button {
       background-color: #5b9bd5;
       color: white;
@@ -86,12 +69,10 @@
       cursor: pointer;
       font-weight: 700;
       letter-spacing: 0.05em;
-      transition: background-color 0.3s ease, transform 0.2s ease;
       width: 100%;
       box-shadow: 0 5px 15px rgba(91,155,213,0.6);
       font-family: 'Fira Code', monospace;
     }
-
     button:hover {
       background-color: #4479c0;
       transform: translateY(-2px);
@@ -101,8 +82,6 @@
       transform: translateY(0);
       box-shadow: 0 4px 12px rgba(68,121,192,0.5);
     }
-
-    /* Notification popup */
     #notification {
       position: fixed;
       top: 20px;
@@ -120,9 +99,7 @@
       letter-spacing: 0.03em;
       user-select: none;
     }
-    #notification.error {
-      background-color: #d9534f;
-    }
+    #notification.error { background-color: #d9534f; }
     #notification .close-btn {
       cursor: pointer;
       font-weight: bold;
@@ -144,27 +121,20 @@
   </nav>
 
   <h2>Submit Your Query</h2>
-  <form id="queryForm" action="https://apisnapshot.vercel.app/submit" method="GET" autocomplete="off">
+  <form id="queryForm" autocomplete="off">
     <input type="hidden" name="type" value="query" />
     
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required autocomplete="name" placeholder="Your full name" />
+    <input type="text" id="name" name="name" required placeholder="Your full name" />
     
     <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required autocomplete="email" placeholder="your.email@example.com" />
+    <input type="email" id="email" name="email" required placeholder="your.email@example.com" />
     
     <label for="subject">Subject:</label>
     <input type="text" id="subject" name="subject" required placeholder="Brief subject" />
     
     <label for="description">Description:</label>
-    <textarea 
-      id="description" 
-      name="description" 
-      rows="3" 
-      required 
-      placeholder="Describe your query in detail..."
-      oninput="autoResize(this)"
-    ></textarea>
+    <textarea id="description" name="description" rows="3" required placeholder="Describe your query in detail..." oninput="autoResize(this)"></textarea>
     
     <button type="submit">Submit</button>
   </form>
@@ -184,46 +154,47 @@
       notifMsg.textContent = message;
       notification.classList.toggle('error', isError);
       notification.style.display = 'block';
-
       clearTimeout(notifTimeout);
-      notifTimeout = setTimeout(() => {
-        hideNotification();
-      }, 5000);
+      notifTimeout = setTimeout(() => { hideNotification(); }, 5000);
     }
 
-    function hideNotification() {
-      notification.style.display = 'none';
-    }
-
+    function hideNotification() { notification.style.display = 'none'; }
     function autoResize(textarea) {
       textarea.style.height = 'auto';
       textarea.style.height = (textarea.scrollHeight) + 'px';
     }
 
-    // Initialize description height
     autoResize(document.getElementById('description'));
 
     form.addEventListener('submit', function(event) {
       event.preventDefault();
 
-      const formData = new FormData(form);
-      const queryString = new URLSearchParams(formData).toString();
-      const url = form.action + '?' + queryString;
+      const formData = {
+        type: "query",
+        name: form.name.value,
+        email: form.email.value,
+        subject: form.subject.value,
+        description: form.description.value
+      };
 
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          if(data.status === "OK") {
-            showNotification(data.message, false);
-            form.reset();
-            autoResize(document.getElementById('description'));
-          } else {
-            showNotification(data.error || 'An error occurred', true);
-          }
-        })
-        .catch(() => {
-          showNotification('Failed to submit query, please try again.', true);
-        });
+      fetch("https://apisnapshot.vercel.app/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.status === "OK") {
+          showNotification(data.message, false);
+          form.reset();
+          autoResize(document.getElementById('description'));
+        } else {
+          showNotification(data.error || 'An error occurred', true);
+        }
+      })
+      .catch(() => {
+        showNotification('Failed to submit query, please try again.', true);
+      });
     });
   </script>
 </body>
