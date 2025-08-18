@@ -50,6 +50,7 @@
 
   .nav a {
     color: #66d9ef;
+    text-underline-offset: -1px;
   }
 
   .nav a:hover {
@@ -60,8 +61,4 @@
   .nav a.active {
     border-color: #66d9ef;
   }
-}
-#nav-entry {
-    font-size: 14px;
-text-underline-offset: -3px;
 }
